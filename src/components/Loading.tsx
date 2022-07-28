@@ -3,7 +3,7 @@ import { View, ActivityIndicator } from "react-native";
 
 import useUi from "../contexts/ui/useUi";
 
-const index: React.FC = () => {
+const Loading: React.FC = () => {
   const { theme } = useUi();
 
   return (
@@ -15,9 +15,9 @@ const index: React.FC = () => {
         alignItems: "center",
       }}
     >
-      <ActivityIndicator color={theme.colors.primary} size='large' />
+      <ActivityIndicator color={theme.colors.action} size='large' />
     </View>
   );
 };
 
-export default index;
+export default Loading;
