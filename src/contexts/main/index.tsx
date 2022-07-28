@@ -8,8 +8,8 @@ import supportedLanguages from "../../utils/supportedLanguages";
 
 type TypeMainContext = {
   weather: Weather | undefined;
-  getWeatherInfo: () => void;
   quote: Quote | undefined;
+  loadInfo: () => void;
 };
 
 const MainContex = createContext<TypeMainContext>({} as TypeMainContext);
@@ -24,29 +24,78 @@ export const MainProvider: React.FC = ({ children }) => {
   const [quote, setQuote] = useState<Quote>();
 
   useEffect(() => {
-    getWeatherInfo();
+    loadInfo();
   }, []);
 
-  const getWeatherInfo = async () => {
+  const loadInfo = async () => {
     try {
       setLoading(true);
+      const weatherData = await getWeather();
+      const quoteData = await getQuote();
 
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      setQuote(quoteData);
+      setWeather(weatherData);
+    } catch {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getQuote = async (): Promise<Quote> => {
+    try {
+      const { data: quotes } = await axios.get<Quote[]>(
+        "https://type.fit/api/quotes"
+      );
+
+      const pickedQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+      const language = Localization.locale.split("-")[0];
+
+      if (language !== "en") {
+        const {
+          data: { text: translatedQuote },
+        } = await axios.get(
+          `https://translate.yandex.net/api/v1.5/tr.json/translate?key=${yandexKey}&lang=${language}&text=${pickedQuote.text}`
+        );
+        return Promise.resolve({
+          text: translatedQuote[0],
+          author: pickedQuote.author,
+        });
+      }
+
+      return Promise.resolve(pickedQuote);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  };
+
+  const getWeather = async (): Promise<Weather> => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") throw new Error("Permission not granted");
 
-      const languageCode = Localization.locale.replace("-", "_").toLowerCase();
+      const languageLocale = Localization.locale
+        .replace("-", "_")
+        .toLowerCase();
+      const language = languageLocale.split("_")[0];
+
+      const languageCode = supportedLanguages.includes(languageLocale)
+        ? languageLocale
+        : supportedLanguages.includes(language)
+        ? language
+        : "en";
 
       const {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync({});
 
       const { data } = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${weatherApiKey}&lang=${supportedLanguages.includes(languageCode) ? languageCode: 'en'}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${weatherApiKey}&lang=${languageCode}&units=metric`
       );
 
-      const isDay =
-        parseInt(moment().format().split("T")[1].split(":")[0]) < 18 &&
-        parseInt(moment().format().split("T")[1].split(":")[0]) > 6;
+      const hour = parseInt(moment().format().split("T")[1].split(":")[0]);
+
+      const isDay = hour < 18 && hour > 6;
 
       const weatherData: Weather = {
         country: data.sys.country,
@@ -58,28 +107,9 @@ export const MainProvider: React.FC = ({ children }) => {
         day: isDay,
       };
 
-      const { data: quotes } = await axios.get<Quote[]>(
-        "https://type.fit/api/quotes"
-      );
-
-      const pikedQuote = quotes[Math.floor(Math.random() * quotes.length)];
-
-      const language = Localization.locale.split("-")[0];
-
-      if (language !== "en") {
-        const {
-          data: { text: translatedQuote },
-        } = await axios.get(
-          `https://translate.yandex.net/api/v1.5/tr.json/translate?key=${yandexKey}&lang=${language}&text=${pikedQuote.text}`
-        );
-        setQuote({ text: translatedQuote[0], author: pikedQuote.author });
-      } else setQuote(pikedQuote);
-
-      setWeather(weatherData);
+      return Promise.resolve(weatherData);
     } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+      return Promise.reject(err);
     }
   };
 
@@ -87,8 +117,8 @@ export const MainProvider: React.FC = ({ children }) => {
     <MainContex.Provider
       value={{
         weather,
-        getWeatherInfo,
         quote,
+        loadInfo,
       }}
     >
       {children}
