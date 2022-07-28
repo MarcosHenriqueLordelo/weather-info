@@ -1,3 +1,5 @@
-const strings: TypeStrings = {};
+const pt_br: Strings = {
+  feelsLike: "Sentimento de",
+};
 
-export default strings;
+export default pt_br;
