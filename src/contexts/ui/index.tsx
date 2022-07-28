@@ -7,14 +7,14 @@ import getStrings from "../../utils/strings";
 
 import themeLight from "../../themes/light";
 import themeDark from "../../themes/dark";
-
-import { TypeStrings } from "../../models/strings";
+import en_us from "../../utils/strings/en_us";
 
 type TypeUiContext = {
-  strings: TypeStrings;
+  strings: Strings;
   theme: DefaultTheme;
   language: string;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   toggleTheme(): void;
 };
 
@@ -23,13 +23,13 @@ const UiContext = createContext<TypeUiContext>({} as TypeUiContext);
 export const UiProvider: React.FC = ({ children }) => {
   const tokenKey = "@tccapp:token:";
 
-  const [strings, setStrings] = useState<TypeStrings>({});
+  const [strings, setStrings] = useState<Strings>(en_us);
   const [theme, setTheme] = useState<DefaultTheme>(themeLight);
   const [language, setLanguage] = useState<string>("pt-br");
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setLanguage(Localization.locale);
+    setLanguage(Localization.locale.toLowerCase());
 
     const loadStoragedData = async () => {
       setLoading(true);
@@ -65,6 +65,7 @@ export const UiProvider: React.FC = ({ children }) => {
         toggleTheme,
         language,
         loading,
+        setLoading,
       }}
     >
       {children}
