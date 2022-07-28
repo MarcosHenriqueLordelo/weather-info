@@ -1,1 +1,3 @@
-export type TypeStrings = {};
+interface Strings {
+  feelsLike: string;
+}
