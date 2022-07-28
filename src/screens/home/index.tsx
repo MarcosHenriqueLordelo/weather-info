@@ -1,7 +1,9 @@
-import React from "react";
-import { Image, View } from "react-native";
+import React, { useCallback, useRef } from "react";
+import { Alert, Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import MaterialIcon from "@expo/vector-icons/MaterialIcons";
+import * as Linking from "expo-linking";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 
 import {
   Author,
@@ -10,33 +12,45 @@ import {
   Container,
   Content,
   FeeledTemp,
-  Header,
-  HeaderTitleSubtitle,
   InfoContainer,
   Quote,
   QuoteContainer,
-  Subtitle,
   Temperature,
-  Title,
   WeatherCondion,
 } from "./styles";
 
-import { TouchableOpacity } from "react-native-gesture-handler";
 import useMain from "../../contexts/main/useMain";
 import Loading from "../../components/Loading";
 import getBackGroundImage from "../../utils/getBackGroundImage";
-import moment from "moment";
 import useUi from "../../contexts/ui/useUi";
+import Header from "../../components/header";
 
 const Index: React.FC = () => {
   const insets = useSafeAreaInsets();
   const { loading, strings } = useUi();
-  const { weather, getWeatherInfo, quote } = useMain();
+  const { weather, quote } = useMain();
+  const captureView = useRef(null);
+
+  const onShare = useCallback(async () => {
+    try {
+      const result = await captureRef(captureView, {
+        quality: 1,
+        format: "png",
+      });
+
+      await Sharing.shareAsync(result);
+    } catch (err) {
+      Alert.alert(
+        "Algo deu errado",
+        "Algo deu errado durante o compartilhamento, tente novamente mais tarde"
+      );
+    }
+  }, [captureView]);
 
   if (!weather || loading || !quote) return <Loading />;
 
   return (
-    <Container>
+    <Container collapsable={false} ref={captureView}>
       <Image
         source={getBackGroundImage(weather.id, weather.day)}
         style={{ position: "absolute", width: "100%", height: "100%" }}
@@ -49,15 +63,7 @@ const Index: React.FC = () => {
         }}
       />
       <Content>
-        <Header>
-          <HeaderTitleSubtitle>
-            <Title>{moment().format("ll")}</Title>
-            <Subtitle>{`${weather.city}, ${weather.country}`}</Subtitle>
-          </HeaderTitleSubtitle>
-          <TouchableOpacity onPress={getWeatherInfo}>
-            <MaterialIcon size={32} name="refresh" color={"#FFFFFF"} />
-          </TouchableOpacity>
-        </Header>
+        <Header onShare={onShare} />
 
         <InfoContainer>
           <Temperature>{weather.temp}°</Temperature>
@@ -66,11 +72,17 @@ const Index: React.FC = () => {
         </InfoContainer>
 
         <QuoteContainer>
-          <Quote>{`"${quote.text}"`}</Quote>
-          <Author>{`- ${quote.author}`}</Author>
+          <Quote>"{quote.text}"</Quote>
+          <Author>- {quote.author}</Author>
         </QuoteContainer>
       </Content>
-      <BuiltByContainer>
+      <BuiltByContainer
+        onPress={() =>
+          Linking.openURL(
+            "https://www.linkedin.com/in/marcos-marques-681167146/"
+          )
+        }
+      >
         <BuiltBy>Built By Marcos Marques</BuiltBy>
       </BuiltByContainer>
       <View
