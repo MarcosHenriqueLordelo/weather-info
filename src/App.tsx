@@ -1,8 +1,6 @@
 import React from "react";
-import { View } from "react-native";
 
 import { ThemeProvider } from "styled-components";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 
@@ -17,10 +15,12 @@ import Loading from "./components/Loading";
 
 const App: React.FC = () => {
   const { theme } = useUi();
-  const insets = useSafeAreaInsets();
 
   const [loaded] = useFonts({
-    RobotoMono: require("./fonts/RobotoMono.ttf"),
+    EduBold: require("./fonts/EduTASBeginner-Bold.ttf"),
+    EduMedium: require("./fonts/EduTASBeginner-Medium.ttf"),
+    EduRegular: require("./fonts/EduTASBeginner-Regular.ttf"),
+    EduSemiBold: require("./fonts/EduTASBeginner-SemiBold.ttf"),
   });
 
   if (!loaded) return <Loading />;
@@ -28,22 +28,8 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <ThemeProvider theme={theme}>
-        <StatusBar style={theme.title === "light" ? "dark" : "light"} />
-        <View
-          style={{
-            height: insets.top,
-            width: "100%",
-            backgroundColor: theme.colors.appBar,
-          }}
-        />
+        <StatusBar style={theme.title !== "light" ? "dark" : "light"} />
         <RootNav />
-        <View
-          style={{
-            height: insets.bottom,
-            width: "100%",
-            backgroundColor: theme.colors.appBar,
-          }}
-        />
       </ThemeProvider>
     </NavigationContainer>
   );
