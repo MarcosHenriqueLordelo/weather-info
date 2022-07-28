@@ -28,7 +28,7 @@ const App: React.FC = () => {
   return (
     <NavigationContainer>
       <ThemeProvider theme={theme}>
-        <StatusBar style={theme.title !== "light" ? "dark" : "light"} />
+        <StatusBar style="light" />
         <RootNav />
       </ThemeProvider>
     </NavigationContainer>
