@@ -1,25 +1,11 @@
 export default {
-  title: "dark",
+  title: 'dark',
 
   colors: {
-    primary: "#",
-    secondary: "#",
-
-    error: "#",
-
-    background: "#",
-    section: "#",
-    appBar: "#",
-
-    rating: "#",
-
-    selected: "#",
-    unselected: "#",
-
-    font: {
-      main: "#",
-      light: "#",
-      darker: "#",
-    },
+    background: '#353941',
+    section: '#26282B80',
+    action: '#90B8F8',
+    font: '#EEEEEE',
+    error: '#F60000',
   },
 };

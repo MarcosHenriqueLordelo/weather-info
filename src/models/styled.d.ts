@@ -5,23 +5,11 @@ declare module "styled-components" {
     title: string;
 
     colors: {
-      primary: string;
-      secondary: string;
-
+      action: string;
+      font: string;
       background: string;
       section: string;
-      appBar: string;
-
-      rating: string;
-
-      selected: string;
-      unselected: string;
-
-      font: {
-        main: string;
-        light: string;
-        darker: string;
-      };
+      error: string;
     };
   }
 }
