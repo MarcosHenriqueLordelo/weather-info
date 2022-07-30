@@ -20,10 +20,12 @@ import {
 } from "./styles";
 
 import useMain from "../../contexts/main/useMain";
-import Loading from "../../components/Loading";
-import getBackGroundImage from "../../utils/getBackGroundImage";
 import useUi from "../../contexts/ui/useUi";
+
+import Loading from "../../components/Loading";
 import Header from "../../components/header";
+
+import getBackGroundImage from "../../utils/getBackGroundImage";
 
 const Index: React.FC = () => {
   const insets = useSafeAreaInsets();
