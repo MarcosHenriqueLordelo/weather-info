@@ -20,8 +20,4 @@ Aplicatio criado para responder ao desafio proposto pela builders, que consiste 
 
 ### **Captura 1**
 
-<img src="./src/assets/screenshots/screenshot1.jpeg" width="20%" height="20%"> <br>
-
-### **Captura 2**
-
-<img src="./src/assets/screenshots/screenshot2.jpg" width="20%" height="20%"> <br>
+<img src="./src/assets/screenshots/screenshot1.jpeg" width="20%" height="20%">   <img src="./src/assets/screenshots/screenshot2.jpg" width="20%" height="20%">
