@@ -4,6 +4,7 @@ Aplicatio criado para responder ao desafio proposto pela builders, que consiste 
 
 ### **Feito Com**
 
+- [Expo](https://docs.expo.dev/)
 - [React Native](http://facebook.github.io/react-native/)
 - [Styled Components](https://styled-components.com)
 
